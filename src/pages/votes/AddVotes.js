@@ -785,7 +785,7 @@ const AddVotes = () => {
             </div>
           ))}
 
-          {!isDisabledForStaff && (
+          {isDisabledForStaff && (
             <button
               className="btn btn-outline-primary mt-2"
               onClick={addCandidat}

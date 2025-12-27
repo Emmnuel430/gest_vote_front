@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout/Layout";
 import Back from "../../components/Layout/Back";
 import ConfirmPopup from "../../components/Layout/ConfirmPopup";
 import ToastMessage from "../../components/Layout/ToastMessage";
 import { fetchWithToken } from "../../utils/fetchWithToken";
 
-const LieuUpdate = () => {
-  const { id } = useParams(); // id du lieu
+const AddLieu = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -22,9 +21,6 @@ const LieuUpdate = () => {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  /* =========================
-      AUTH CHECK
-  ========================= */
   const userInfo = JSON.parse(sessionStorage.getItem("user-info"));
   const userId = userInfo ? userInfo.id : null;
 
@@ -35,30 +31,9 @@ const LieuUpdate = () => {
     }
   }, [userId, navigate]);
 
-  /* =========================
-      LOAD DATA
-  ========================= */
-  const loadLieu = useCallback(async () => {
-    try {
-      const res = await fetchWithToken(
-        `${process.env.REACT_APP_API_BASE_URL}/lieux-votes/${id}`
-      );
-      const data = await res.json();
-
-      setForm({
-        code: data.code || "",
-        nom: data.nom || "",
-        nombre_electeurs: data.nombre_electeurs || "",
-        commune_id: data.commune_id || "",
-      });
-    } catch {
-      setError("Impossible de charger le lieu de vote");
-    }
-  }, [id]);
   useEffect(() => {
-    loadLieu();
     loadCommunes();
-  }, [loadLieu]);
+  }, []);
 
   const loadCommunes = async () => {
     try {
@@ -72,9 +47,6 @@ const LieuUpdate = () => {
     }
   };
 
-  /* =========================
-      FORM HANDLING
-  ========================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -82,10 +54,10 @@ const LieuUpdate = () => {
 
   const handleConfirm = () => {
     setShowModal(false);
-    handleUpdate();
+    handleCreate();
   };
 
-  const handleUpdate = async () => {
+  const handleCreate = async () => {
     setLoading(true);
     setError("");
 
@@ -99,12 +71,10 @@ const LieuUpdate = () => {
         commune_id: form.commune_id,
       };
 
-      //   console.log(payload);
-
       const res = await fetchWithToken(
-        `${process.env.REACT_APP_API_BASE_URL}/lieux-votes/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/lieux-votes`,
         {
-          method: "PUT",
+          method: "POST",
           body: JSON.stringify(payload),
         }
       );
@@ -112,12 +82,12 @@ const LieuUpdate = () => {
       const result = await res.json();
 
       if (!res.ok) {
-        setError(result.message || "Erreur lors de la mise à jour");
+        setError(result.message || "Erreur lors de la création");
         setLoading(false);
         return;
       }
 
-      alert("Lieu de vote mis à jour avec succès");
+      alert("Lieu de vote créé avec succès");
       navigate("/admin-gest/lieux-de-vote");
     } catch {
       setError("Une erreur inattendue est survenue");
@@ -126,15 +96,12 @@ const LieuUpdate = () => {
     }
   };
 
-  /* =========================
-      RENDER
-  ========================= */
   return (
     <Layout>
       <Back>admin-gest/lieux-de-vote</Back>
 
       <div className="col-sm-6 offset-sm-3 mt-5">
-        <h1>Modifier un lieu de vote</h1>
+        <h1>Ajouter un lieu de vote</h1>
 
         {error && <ToastMessage message={error} onClose={() => setError("")} />}
 
@@ -144,6 +111,7 @@ const LieuUpdate = () => {
             type="text"
             name="code"
             className="form-control"
+            placeholder="Ex : 550"
             value={form.code}
             onChange={handleChange}
             disabled={loading}
@@ -186,7 +154,7 @@ const LieuUpdate = () => {
             <option value="">-- Sélectionner --</option>
             {communes.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.nom}
+                {c.code} - {c.nom}
               </option>
             ))}
           </select>
@@ -199,10 +167,10 @@ const LieuUpdate = () => {
         >
           {loading ? (
             <>
-              <i className="fas fa-spinner fa-spin"></i> Mise à jour...
+              <i className="fas fa-spinner fa-spin"></i> Création...
             </>
           ) : (
-            "Mettre à jour"
+            "Créer"
           )}
         </button>
       </div>
@@ -211,12 +179,12 @@ const LieuUpdate = () => {
         show={showModal}
         onClose={() => setShowModal(false)}
         onConfirm={handleConfirm}
-        title="Confirmer la mise à jour"
-        body={<p>Voulez-vous vraiment modifier ce lieu de vote ?</p>}
+        title="Confirmer la création"
+        body={<p>Voulez-vous vraiment créer ce lieu de vote ?</p>}
         btnColor="primary"
       />
     </Layout>
   );
 };
 
-export default LieuUpdate;
+export default AddLieu;

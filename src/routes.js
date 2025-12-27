@@ -23,6 +23,7 @@ import LieuVoteList from "./pages/lieux/LieuVoteList";
 import AddVotes from "./pages/votes/AddVotes";
 import Statistiques from "./pages/votes/Statistiques";
 import LieuUpdate from "./pages/lieux/LieuUpdate";
+import AddLieu from "./pages/lieux/AddLieu";
 
 const AppRoutes = () => {
   return (
@@ -63,6 +64,14 @@ const AppRoutes = () => {
           element={<Protected Cmp={CandidatUpdate} adminOnly />}
         />
         {/* ------------------------ */}
+        <Route
+          path="/admin-gest/lieux/importer"
+          element={<Protected Cmp={ImportLieu} />}
+        />
+        <Route
+          path="/admin-gest/lieux/ajouter"
+          element={<Protected Cmp={AddLieu} />}
+        />
         <Route
           path="/admin-gest/lieux/importer"
           element={<Protected Cmp={ImportLieu} />}

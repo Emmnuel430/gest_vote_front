@@ -12,7 +12,6 @@ export const generatePdfBureaux = (lieux) => {
   let index = 1;
 
   lieux.forEach((lieu) => {
-    // 🔹 Trier les bureaux par nom
     const bureauxTries = [...lieu.bureaux].sort((a, b) =>
       a.nom.localeCompare(b.nom)
     );
@@ -31,17 +30,22 @@ export const generatePdfBureaux = (lieux) => {
     index++;
   });
 
-  autoTable(doc, {
-    head: [["N°", "Lieu de vote", "Bureau", "Inscrits", "Votants", "Parti"]],
-    body: tableData,
-    startY: 20,
-    theme: "grid",
-    headStyles: { fillColor: [150, 150, 150] },
-    styles: { fontSize: 12 }, // 🔹 augmente la taille du texte
-    columnStyles: {
-      5: { cellWidth: 100 }, // Parti
-    },
-  });
+  if (tableData.length === 0) {
+    doc.setFontSize(16);
+    doc.text("Aucune donnée disponible pour les bureaux de vote.", 40, 50);
+  } else {
+    autoTable(doc, {
+      head: [["N°", "Lieu de vote", "Bureau", "Inscrits", "Votants", "Parti"]],
+      body: tableData,
+      startY: 20,
+      theme: "grid",
+      headStyles: { fillColor: [150, 150, 150] },
+      styles: { fontSize: 12 },
+      columnStyles: {
+        5: { cellWidth: 100 }, // Parti
+      },
+    });
+  }
 
   doc.save("bureaux.pdf");
 };

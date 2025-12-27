@@ -144,8 +144,8 @@ const LieuVoteList = () => {
             {/* Header */}
             <HeaderWithFilter
               title="Lieux de vote"
-              link="/admin-gest/lieux/importer"
-              linkText="Importer"
+              link="/admin-gest/lieux/ajouter"
+              linkText="Ajouter"
               main={lieux.length}
               sortOption={sortOption}
               setSortOption={setSortOption}
