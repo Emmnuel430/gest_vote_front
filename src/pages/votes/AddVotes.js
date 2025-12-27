@@ -248,12 +248,15 @@ const AddVotes = () => {
                     );
 
                     if (!res.ok) {
+                      const errText = await res.text();
+                      console.log("GET /resultats failed", res.status, errText);
                       setBureauxEntries([]);
                       setResultats([]);
                       return;
                     }
 
                     const data = await res.json();
+                    console.log("GET /resultats response", data);
 
                     // Backend returns object { lieu_vote_id, bureaux, resultats }
                     const bureauxFromBack = data.bureaux || [];
@@ -306,8 +309,20 @@ const AddVotes = () => {
                         })
                       );
                     } else {
-                      // pas de résultats enregistrés: on initialise resultats à [] (l'utilisateur ajoutera)
-                      setResultats([]);
+                      // pas de résultats enregistrés: on initialise un résultat vide
+                      // afin que l'utilisateur puisse immédiatement ajouter des voix
+                      const initialResultats = [
+                        {
+                          candidat_id: null,
+                          nombre_voix: 0,
+                          bureaux: mappedBureaux.map((mb) => ({
+                            bureau_id: mb.bureau_id,
+                            voix: 0,
+                          })),
+                        },
+                      ];
+
+                      setResultats(initialResultats);
                     }
                   } catch (err) {
                     setError(
