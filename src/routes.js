@@ -22,6 +22,7 @@ import ImportLieu from "./pages/lieux/ImportLieu";
 import LieuVoteList from "./pages/lieux/LieuVoteList";
 import AddVotes from "./pages/votes/AddVotes";
 import Statistiques from "./pages/votes/Statistiques";
+import LieuUpdate from "./pages/lieux/LieuUpdate";
 
 const AppRoutes = () => {
   return (
@@ -67,6 +68,10 @@ const AppRoutes = () => {
           element={<Protected Cmp={ImportLieu} />}
         />
         <Route
+          path="/admin-gest/lieux/update/:id"
+          element={<Protected Cmp={LieuUpdate} />}
+        />
+        <Route
           path="/admin-gest/lieux-de-vote"
           element={<Protected Cmp={LieuVoteList} />}
         />
@@ -78,7 +83,7 @@ const AppRoutes = () => {
         {/* ------------------------ */}
         <Route
           path="/admin-gest/votes/stats"
-          element={<Protected Cmp={Statistiques} adminOnly />}
+          element={<Protected Cmp={Statistiques} />}
         />
 
         {/* Si l'URL n'est pas définie, renvoyer l'utilisateur vers la page de connexion */}

@@ -29,13 +29,13 @@ export default function SidebarLinks({ user }) {
     // --- GESTION DES CANDIDATS ---
     {
       group: "Gestion des candidats",
-      role: ["super_admin", "dev", "staff"],
+      role: ["super_admin", "dev"],
       items: [
         {
           label: "Listing candidats",
           icon: "fa-list",
           path: "/admin-gest/candidats",
-          roles: ["super_admin", "dev", "staff"],
+          roles: ["super_admin", "dev"],
         },
       ],
     },
@@ -49,7 +49,7 @@ export default function SidebarLinks({ user }) {
           label: "Importer",
           icon: "fa-upload",
           path: "/admin-gest/lieux/importer",
-          roles: ["super_admin", "dev", "staff"],
+          roles: ["super_admin", "dev"],
         },
         {
           label: "Listing lieux de votes",

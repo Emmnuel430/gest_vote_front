@@ -11,32 +11,40 @@ import ChartRepartition from "./ChartRepartition";
 /* =======================
       CONFIG PAR TYPE
   ======================= */
+const userInfo = JSON.parse(sessionStorage.getItem("user-info"));
+const userRole = userInfo ? userInfo.role : null;
+
 const config = {
   globales: {
     label: "Statistiques globales",
     endpoint: "/statistiques/globales",
     hasSelect: false,
   },
-  departement: {
-    label: "Par département",
-    endpoint: "/statistiques/departement",
-    optionsEndpoint: "/departements",
-  },
-  souspref: {
-    label: "Par sous-préfecture",
-    endpoint: "/statistiques/sous-pref",
-    optionsEndpoint: "/sous-prefectures",
-  },
-  commune: {
-    label: "Par commune",
-    endpoint: "/statistiques/commune",
-    optionsEndpoint: "/communes",
-  },
-  lieu: {
-    label: "Par lieu de vote",
-    endpoint: "/statistiques/lieu",
-    optionsEndpoint: "/lieux-vote",
-  },
+
+  ...(userRole !== "staff"
+    ? {
+        departement: {
+          label: "Par département",
+          endpoint: "/statistiques/departement",
+          optionsEndpoint: "/departements",
+        },
+        souspref: {
+          label: "Par sous-préfecture",
+          endpoint: "/statistiques/sous-pref",
+          optionsEndpoint: "/sous-prefectures",
+        },
+        commune: {
+          label: "Par commune",
+          endpoint: "/statistiques/commune",
+          optionsEndpoint: "/communes",
+        },
+        lieu: {
+          label: "Par lieu de vote",
+          endpoint: "/statistiques/lieu",
+          optionsEndpoint: "/lieux-vote",
+        },
+      }
+    : {}),
 };
 
 const Statistiques = () => {
@@ -109,6 +117,8 @@ const Statistiques = () => {
     }
   };
 
+  // console.log(stats);
+
   /* =======================
       RENDER
   ======================= */
@@ -134,10 +144,14 @@ const Statistiques = () => {
             }}
           >
             <option value="globales">Globales</option>
-            <option value="departement">Département</option>
-            <option value="souspref">Sous-préfecture</option>
-            <option value="commune">Commune</option>
-            <option value="lieu">Lieu de vote</option>
+            {userRole !== "staff" && (
+              <>
+                <option value="departement">Département</option>
+                <option value="souspref">Sous-préfecture</option>
+                <option value="commune">Commune</option>
+                <option value="lieu">Lieu de vote</option>
+              </>
+            )}
           </select>
         </div>
 
@@ -174,9 +188,10 @@ const Statistiques = () => {
             {stats.gagnant && (
               <div className="alert alert-success">
                 🏆 <strong>Gagnant :</strong> {stats.gagnant.nom}{" "}
-                {stats.gagnant.prenom} ({stats.gagnant.parti}) –{" "}
-                <strong>{stats.gagnant.voix}</strong> voix (
-                {stats.gagnant.pourcentage}%)
+                {stats.gagnant.prenom} ({stats.gagnant.parti}) avec{" "}
+                <strong>
+                  {stats.gagnant.voix} voix (soit {stats.gagnant.pourcentage}%)
+                </strong>
               </div>
             )}
 

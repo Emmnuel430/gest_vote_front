@@ -7,6 +7,8 @@ import Loader from "../../components/Layout/Loader";
 import SearchBar from "../../components/Layout/SearchBar";
 import ConfirmPopup from "../../components/Layout/ConfirmPopup";
 import { fetchWithToken } from "../../utils/fetchWithToken";
+import { Link } from "react-router-dom";
+import { generatePdfBureaux } from "./generatePdfBureaux";
 
 const LieuVoteList = () => {
   const [lieux, setLieux] = useState([]);
@@ -47,6 +49,9 @@ const LieuVoteList = () => {
     fetchLieux();
   }, []);
 
+  const userInfo = JSON.parse(sessionStorage.getItem("user-info"));
+  const userRole = userInfo ? userInfo.role : null;
+
   const handleShowDetails = (lieu) => {
     setSelectedLieu(lieu);
     setShowDetails(true);
@@ -82,6 +87,42 @@ const LieuVoteList = () => {
   return (
     <Layout>
       <div className="container mt-2">
+        <div className="mb-3 d-flex gap-2">
+          <button
+            className="btn btn-secondary"
+            onClick={async () => {
+              setLoading(true);
+              setError("");
+              try {
+                const res = await fetchWithToken(
+                  `${process.env.REACT_APP_API_BASE_URL}/lieux-bureaux`
+                );
+                if (!res.ok)
+                  throw new Error("Erreur lors du téléchargement des bureaux");
+                const data = await res.json();
+                if (typeof generatePdfBureaux === "function") {
+                  generatePdfBureaux(data.data || data);
+                } else {
+                  // fallback: open in new tab as JSON
+                  const blob = new Blob(
+                    [JSON.stringify(data.data || data, null, 2)],
+                    { type: "application/json" }
+                  );
+                  const url = URL.createObjectURL(blob);
+                  window.open(url, "_blank");
+                }
+              } catch (err) {
+                setError(err.message || "Erreur inattendue");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            disabled={loading}
+          >
+            <i className="fa fa-file-pdf me-2" />
+            Exporter bureaux (PDF)
+          </button>
+        </div>
         {error && <div className="alert alert-danger">{error}</div>}
 
         {loading ? (
@@ -154,13 +195,22 @@ const LieuVoteList = () => {
                           >
                             <i className="fas fa-eye"></i>
                           </Button>
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => handleOpenModal(lieu)}
-                          >
-                            <i className="fas fa-trash"></i>
-                          </Button>
+                          {userRole !== "staff" && (
+                            <>
+                              <Link to={`/admin-gest/lieux/update/${lieu.id}`}>
+                                <Button variant="warning" size="sm">
+                                  <i className="fas fa-edit"></i>
+                                </Button>
+                              </Link>
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() => handleOpenModal(lieu)}
+                              >
+                                <i className="fas fa-trash"></i>
+                              </Button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
