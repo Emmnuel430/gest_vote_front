@@ -91,7 +91,7 @@ export default function SidebarLinks({ user }) {
         }`}
       >
         <i className="fa fa-home me-2"></i>
-        <span className="text-body">Utilisateurs</span>
+        <span className="text-body">Dashboard</span>
       </Link>
       <Link
         to="/admin-gest/utilisateurs"
@@ -102,7 +102,7 @@ export default function SidebarLinks({ user }) {
         }`}
       >
         <i className="fa fa-users me-2"></i>
-        <span className="text-body">Dashboard</span>
+        <span className="text-body">Utilisateurs</span>
       </Link>
 
       {/* ➤ Boucle sur les groupes */}

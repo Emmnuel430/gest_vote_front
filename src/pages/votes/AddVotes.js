@@ -100,8 +100,9 @@ const AddVotes = () => {
   /* =======================
       SUBMIT
   ======================= */
+  const disabled = !lieuVoteId || resultats[0]?.candidat_id == null;
   const handleSubmit = async () => {
-    if (!lieuVoteId || resultats.length === 0) {
+    if (disabled) {
       setError("Veuillez sélectionner un lieu et au moins un candidat.");
       return;
     }
@@ -308,7 +309,7 @@ const AddVotes = () => {
         <button
           onClick={() => setShowModal(true)}
           className="btn btn-primary w-100 mt-3"
-          disabled={loading}
+          disabled={loading || disabled}
         >
           {loading ? (
             <>
