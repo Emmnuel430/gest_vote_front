@@ -143,6 +143,7 @@ const LieuVoteList = () => {
 
             {/* Header */}
             <HeaderWithFilter
+              allowedRoles={["dev", "super_admin"]}
               title="Lieux de vote"
               link="/admin-gest/lieux/ajouter"
               linkText="Ajouter"
