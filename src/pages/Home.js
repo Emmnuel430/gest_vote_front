@@ -1,9 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import Layout from "../components/Layout/Layout";
 // Récupérer l'ID de l'utilisateur connecté à partir du sessionStorage
-const userInfo = JSON.parse(sessionStorage.getItem("user-info"));
-import { useNavigate } from "react-router-dom";
+// const userInfo = JSON.parse(sessionStorage.getItem("user-info"));
 
 const Home = () => {
   const navigate = useNavigate();
@@ -41,9 +41,7 @@ const Home = () => {
       <Layout>
         <div className="container mt-4 px-4">
           <h1 className="mb-3">Dashboard</h1>
-          <h2 className="mb-4">
-            Bienvenue, <strong>{userInfo ? userInfo.name : "Invité"}</strong> !
-          </h2>
+          <h2 className="mb-4">Bienvenue !</h2>
 
           <div className="d-flex flex-wrap justify-content-center gap-4 mt-4">
             {dashboardLinks.map((item, index) => (
