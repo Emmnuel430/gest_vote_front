@@ -7,7 +7,7 @@ import ToastMessage from "../../components/Layout/ToastMessage";
 import { fetchWithToken } from "../../utils/fetchWithToken";
 
 const ImportLieu = () => {
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]); // 🔹 tableau pour plusieurs fichiers
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -30,11 +30,11 @@ const ImportLieu = () => {
 
   const handleCancel = () => setShowModal(false);
 
-  const disabled = !file;
+  const disabled = files.length === 0;
 
   const handleImport = async () => {
     if (disabled) {
-      setError("Veuillez sélectionner un fichier JSON.");
+      setError("Veuillez sélectionner au moins un fichier JSON.");
       return;
     }
 
@@ -43,9 +43,13 @@ const ImportLieu = () => {
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
 
-      let result = await fetchWithToken(
+      // 🔹 Ajouter tous les fichiers au FormData
+      Array.from(files).forEach((file) => {
+        formData.append("files[]", file); // 🔹 nom attendu par ton API : files[]
+      });
+
+      let res = await fetchWithToken(
         `${process.env.REACT_APP_API_BASE_URL}/import`,
         {
           method: "POST",
@@ -53,16 +57,16 @@ const ImportLieu = () => {
         }
       );
 
-      result = await result.json();
+      const result = await res.json();
 
-      if (result.error) {
+      if (!res.ok || result.error) {
         setError(result.error || "Erreur lors de l'importation.");
         setLoading(false);
         return;
       }
 
       alert(result.message || "Importation réussie !");
-      setFile(null); // réinitialise le fichier sélectionné
+      setFiles([]); // 🔹 réinitialiser les fichiers sélectionnés
       setLoading(false);
       navigate("/admin-gest/lieux-de-vote");
     } catch (e) {
@@ -80,16 +84,17 @@ const ImportLieu = () => {
         {error && <ToastMessage message={error} onClose={() => setError("")} />}
 
         <div className="mb-3">
-          <label htmlFor="file" className="form-label">
-            Fichier JSON*
+          <label htmlFor="files" className="form-label">
+            Fichiers JSON*
           </label>
           <input
             disabled={loading}
             type="file"
-            id="file"
+            id="files"
             className="form-control"
             accept=".json"
-            onChange={(e) => setFile(e.target.files[0])}
+            multiple // 🔹 autorise plusieurs fichiers
+            onChange={(e) => setFiles(e.target.files)}
           />
         </div>
 
