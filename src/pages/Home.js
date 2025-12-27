@@ -20,6 +20,11 @@ const Home = () => {
       path: "/admin-gest/lieux/importer",
     },
     {
+      label: "Ajouter lieux de vote",
+      icon: "fa-plus-circle",
+      path: "/admin-gest/lieux/ajouter",
+    },
+    {
       label: "Listing lieux de vote",
       icon: "fa-list-alt",
       path: "/admin-gest/lieux-de-vote",
